@@ -1,0 +1,20 @@
+Total Billed = SUM(fct_claim[billed_amount])
+
+Total Paid = SUM(fct_claim[paid_amount])
+
+Outstanding Balance = SUM(fct_claim[balance_amount])
+
+Claim Count = DISTINCTCOUNT(fct_claim[claim_id])
+
+Denied Claims = CALCULATE([Claim Count], fct_claim[claim_status] = "Denied")
+
+Denial Rate = DIVIDE([Denied Claims], [Claim Count])
+
+Appointment Count = DISTINCTCOUNT(fct_appointment[appointment_id])
+
+Completed Appointments = CALCULATE([Appointment Count], fct_appointment[status] = "Completed")
+
+No Show Rate = DIVIDE(
+    CALCULATE([Appointment Count], fct_appointment[status] = "No Show"),
+    [Appointment Count]
+)

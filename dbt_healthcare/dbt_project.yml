@@ -1,0 +1,24 @@
+name: healthcare_analytics
+version: '1.0.0'
+config-version: 2
+
+profile: healthcare_analytics
+
+model-paths: ["models"]
+snapshot-paths: ["snapshots"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+models:
+  healthcare_analytics:
+    +database: DEV_HEALTH_DB
+    staging:
+      +schema: STAGING
+      +materialized: view
+    intermediate:
+      +schema: INTERMEDIATE
+      +materialized: table
+    marts:
+      +schema: MART
+      +materialized: table

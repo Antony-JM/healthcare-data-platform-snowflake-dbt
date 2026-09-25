@@ -1,0 +1,14 @@
+{
+  "name": "PL_HEALTH_FULL_LOAD",
+  "description": "Illustrative ADF full-load orchestration",
+  "steps": [
+    "Lookup source control",
+    "Copy Oracle/SQL Server -> Azure Blob landing",
+    "Validate file arrival",
+    "Copy/LOAD landing -> Snowflake RAW",
+    "Execute dbt build",
+    "Execute dbt test",
+    "Run reconciliation",
+    "Update batch audit"
+  ]
+}

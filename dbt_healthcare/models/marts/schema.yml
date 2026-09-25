@@ -1,0 +1,32 @@
+version: 2
+models:
+  - name: dim_patient
+    columns:
+      - name: patient_id
+        tests: [not_null, unique]
+  - name: dim_provider
+    columns:
+      - name: provider_id
+        tests: [not_null, unique]
+  - name: fct_claim
+    columns:
+      - name: claim_id
+        tests: [not_null, unique]
+      - name: patient_id
+        tests:
+          - relationships:
+              to: ref('dim_patient')
+              field: patient_id
+      - name: provider_id
+        tests:
+          - relationships:
+              to: ref('dim_provider')
+              field: provider_id
+  - name: fct_billing
+    columns:
+      - name: billing_id
+        tests: [not_null, unique]
+  - name: fct_payment
+    columns:
+      - name: payment_id
+        tests: [not_null, unique]

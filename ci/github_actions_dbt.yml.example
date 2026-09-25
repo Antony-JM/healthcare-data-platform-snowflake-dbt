@@ -1,0 +1,20 @@
+name: dbt-ci
+
+on:
+  pull_request:
+    paths:
+      - "dbt_healthcare/**"
+
+jobs:
+  dbt-build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dbt
+        run: pip install dbt-snowflake
+      - name: dbt deps
+        working-directory: dbt_healthcare
+        run: dbt deps
+      - name: dbt build
+        working-directory: dbt_healthcare
+        run: dbt build --target dev

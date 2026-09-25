@@ -1,0 +1,14 @@
+{
+  "name": "PL_HEALTH_INCREMENTAL",
+  "description": "Illustrative watermark/CDC-driven pipeline",
+  "steps": [
+    "Read last successful watermark",
+    "Extract changed rows from Oracle/SQL Server",
+    "Land files partitioned by batch_id",
+    "Load RAW",
+    "Refresh STREAM/trigger TASK",
+    "Run dbt incremental models",
+    "Run dbt tests",
+    "Reconcile and commit watermark"
+  ]
+}

@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# dbt
+target/
+dbt_packages/
+logs/
+
+# Local dbt credentials
+profiles.yml
+
+# Secrets / environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+
+# OS/editor temp
+*.swp
+*.swo
