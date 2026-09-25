@@ -1,15 +1,36 @@
--- External/internal stage patterns and file formats
-CREATE FILE FORMAT IF NOT EXISTS DEV_HEALTH_DB.RAW.FF_TXT TYPE = CSV FIELD_DELIMITER = NONE SKIP_HEADER = 0;
+-- 05_stages_and_copy.sql
+-- Internal-stage implementation for the two-day, zero-cost hands-on build.
+-- Production equivalent: ADF -> Azure Blob/S3/GCS -> Snowflake external stage.
+
+USE WAREHOUSE HEALTH_DW_WH;
+
+CREATE FILE FORMAT IF NOT EXISTS DEV_HEALTH_DB.RAW.FF_CSV
+    TYPE = CSV
+    SKIP_HEADER = 1
+    FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+    NULL_IF = ('', 'NULL', 'null');
+
+CREATE FILE FORMAT IF NOT EXISTS DEV_HEALTH_DB.RAW.FF_TXT
+    TYPE = CSV
+    FIELD_DELIMITER = NONE
+    SKIP_HEADER = 0;
+
 CREATE FILE FORMAT IF NOT EXISTS DEV_HEALTH_DB.RAW.FF_JSON TYPE = JSON;
 CREATE FILE FORMAT IF NOT EXISTS DEV_HEALTH_DB.RAW.FF_PARQUET TYPE = PARQUET;
 CREATE FILE FORMAT IF NOT EXISTS DEV_HEALTH_DB.RAW.FF_AVRO TYPE = AVRO;
 CREATE FILE FORMAT IF NOT EXISTS DEV_HEALTH_DB.RAW.FF_ORC TYPE = ORC;
 
--- Example internal stage. For cloud landing, use an external stage with a storage integration.
 CREATE OR REPLACE STAGE DEV_HEALTH_DB.RAW.HEALTH_LANDING_STAGE;
 
--- Example CSV load pattern
+-- Confirm the stage exists.
+SHOW STAGES IN SCHEMA DEV_HEALTH_DB.RAW;
+
+-- Example load pattern (execute one entity at a time after uploading files):
 -- COPY INTO DEV_HEALTH_DB.RAW.PATIENTS
--- FROM @DEV_HEALTH_DB.RAW.HEALTH_LANDING_STAGE/patients/
--- FILE_FORMAT = DEV_HEALTH_DB.RAW.FF_CSV
+-- FROM (
+--   SELECT $1,$2,$3,TO_DATE($4),$5,$6,$7,$8,$9,$10,TO_DATE($11),
+--          'ORACLE','PATIENT','FULL_20260926_001',METADATA$FILENAME,CURRENT_TIMESTAMP()
+--   FROM @DEV_HEALTH_DB.RAW.HEALTH_LANDING_STAGE/full_load/2026-09-26/patients.csv
+-- )
+-- FILE_FORMAT = (FORMAT_NAME = 'DEV_HEALTH_DB.RAW.FF_CSV')
 -- ON_ERROR = 'ABORT_STATEMENT';
