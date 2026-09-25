@@ -26,3 +26,9 @@ profiles.yml
 # OS/editor temp
 *.swp
 *.swo
+
+# Local ingestion landing zone
+landing/
+
+# Local ingestion landing zone
+landing/
