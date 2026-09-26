@@ -1,0 +1,31 @@
+version: 2
+
+models:
+
+  - name: int_patient_activity
+    columns:
+
+      - name: patient_id
+        data_tests:
+          - not_null
+          - unique
+
+  - name: int_claim_financials
+    columns:
+
+      - name: claim_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: patient_id
+        data_tests:
+          - not_null
+
+      - name: provider_id
+        data_tests:
+          - not_null
+
+      - name: source_financial_reconciliation_difference
+        data_tests:
+          - not_null
