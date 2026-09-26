@@ -1,32 +1,129 @@
 version: 2
+
 models:
   - name: dim_patient
     columns:
       - name: patient_id
-        tests: [not_null, unique]
+        data_tests:
+          - not_null
+          - unique
+
   - name: dim_provider
     columns:
       - name: provider_id
-        tests: [not_null, unique]
+        data_tests:
+          - not_null
+          - unique
+
+  - name: dim_insurance
+    columns:
+      - name: insurance_id
+        data_tests:
+          - not_null
+          - unique
+
+  - name: dim_date
+    columns:
+      - name: date_day
+        data_tests:
+          - not_null
+          - unique
+
   - name: fct_claim
     columns:
       - name: claim_id
-        tests: [not_null, unique]
+        data_tests:
+          - not_null
+          - unique
+
       - name: patient_id
-        tests:
+        data_tests:
+          - not_null
           - relationships:
-              to: ref('dim_patient')
-              field: patient_id
+              arguments:
+                to: ref('dim_patient')
+                field: patient_id
+
       - name: provider_id
-        tests:
+        data_tests:
+          - not_null
           - relationships:
-              to: ref('dim_provider')
-              field: provider_id
+              arguments:
+                to: ref('dim_provider')
+                field: provider_id
+
   - name: fct_billing
     columns:
       - name: billing_id
-        tests: [not_null, unique]
+        data_tests:
+          - not_null
+          - unique
+
+      - name: claim_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fct_claim')
+                field: claim_id
+
   - name: fct_payment
     columns:
       - name: payment_id
-        tests: [not_null, unique]
+        data_tests:
+          - not_null
+          - unique
+
+      - name: claim_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fct_claim')
+                field: claim_id
+
+  - name: fct_appointment
+    columns:
+      - name: appointment_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: patient_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_patient')
+                field: patient_id
+
+      - name: provider_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_provider')
+                field: provider_id
+
+  - name: fct_clinical_record
+    columns:
+      - name: clinical_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: patient_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_patient')
+                field: patient_id
+
+      - name: provider_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_provider')
+                field: provider_id
