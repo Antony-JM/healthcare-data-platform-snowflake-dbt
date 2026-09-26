@@ -1,0 +1,229 @@
+USE WAREHOUSE HEALTH_DW_WH;
+
+CREATE OR REPLACE TABLE DEV_HEALTH_DB.AUDIT.BATCH_AUDIT (
+    BATCH_ID                         VARCHAR,
+    SOURCE_SYSTEM                    VARCHAR,
+    SOURCE_TABLE                     VARCHAR,
+    FILE_NAME                        VARCHAR,
+    EXPECTED_SOURCE_ROW_COUNT       NUMBER,
+    RAW_ROW_COUNT                    NUMBER,
+    ROW_COUNT_DIFFERENCE             NUMBER,
+    SOURCE_TO_RAW_STATUS             VARCHAR,
+    RAW_BILLED_AMOUNT                NUMBER(18,2),
+    RAW_PAID_AMOUNT                  NUMBER(18,2),
+    RAW_BALANCE_AMOUNT               NUMBER(18,2),
+    FINANCIAL_RECONCILIATION_DIFF    NUMBER(18,2),
+    FINANCIAL_RECONCILIATION_STATUS  VARCHAR,
+    LOAD_STATUS                      VARCHAR,
+    AUDIT_TS                         TIMESTAMP_LTZ
+);
+
+INSERT INTO DEV_HEALTH_DB.AUDIT.BATCH_AUDIT
+(
+    BATCH_ID,
+    SOURCE_SYSTEM,
+    SOURCE_TABLE,
+    FILE_NAME,
+    EXPECTED_SOURCE_ROW_COUNT,
+    RAW_ROW_COUNT,
+    ROW_COUNT_DIFFERENCE,
+    SOURCE_TO_RAW_STATUS,
+    RAW_BILLED_AMOUNT,
+    RAW_PAID_AMOUNT,
+    RAW_BALANCE_AMOUNT,
+    FINANCIAL_RECONCILIATION_DIFF,
+    FINANCIAL_RECONCILIATION_STATUS,
+    LOAD_STATUS,
+    AUDIT_TS
+)
+
+SELECT
+    'FULL_20260926_001',
+    'ORACLE',
+    'PATIENT',
+    'patients.csv',
+    50,
+    COUNT(*),
+    COUNT(*) - 50,
+    IFF(COUNT(*) = 50, 'PASS', 'FAIL'),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    'NOT_APPLICABLE',
+    IFF(COUNT(*) = 50, 'SUCCESS', 'FAILED'),
+    CURRENT_TIMESTAMP()
+FROM DEV_HEALTH_DB.RAW.PATIENTS
+
+UNION ALL
+
+SELECT
+    'FULL_20260926_001',
+    'ORACLE',
+    'PROVIDER',
+    'providers.csv',
+    4,
+    COUNT(*),
+    COUNT(*) - 4,
+    IFF(COUNT(*) = 4, 'PASS', 'FAIL'),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    'NOT_APPLICABLE',
+    IFF(COUNT(*) = 4, 'SUCCESS', 'FAILED'),
+    CURRENT_TIMESTAMP()
+FROM DEV_HEALTH_DB.RAW.PROVIDERS
+
+UNION ALL
+
+SELECT
+    'FULL_20260926_001',
+    'SQL_SERVER',
+    'INSURANCE',
+    'insurance.csv',
+    50,
+    COUNT(*),
+    COUNT(*) - 50,
+    IFF(COUNT(*) = 50, 'PASS', 'FAIL'),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    'NOT_APPLICABLE',
+    IFF(COUNT(*) = 50, 'SUCCESS', 'FAILED'),
+    CURRENT_TIMESTAMP()
+FROM DEV_HEALTH_DB.RAW.INSURANCE
+
+UNION ALL
+
+SELECT
+    'FULL_20260926_001',
+    'SQL_SERVER',
+    'APPOINTMENT',
+    'appointments.csv',
+    100,
+    COUNT(*),
+    COUNT(*) - 100,
+    IFF(COUNT(*) = 100, 'PASS', 'FAIL'),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    'NOT_APPLICABLE',
+    IFF(COUNT(*) = 100, 'SUCCESS', 'FAILED'),
+    CURRENT_TIMESTAMP()
+FROM DEV_HEALTH_DB.RAW.APPOINTMENTS
+
+UNION ALL
+
+SELECT
+    'FULL_20260926_001',
+    'ORACLE',
+    'CLINICAL_RECORD',
+    'clinical_records.csv',
+    100,
+    COUNT(*),
+    COUNT(*) - 100,
+    IFF(COUNT(*) = 100, 'PASS', 'FAIL'),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    'NOT_APPLICABLE',
+    IFF(COUNT(*) = 100, 'SUCCESS', 'FAILED'),
+    CURRENT_TIMESTAMP()
+FROM DEV_HEALTH_DB.RAW.CLINICAL_RECORDS
+
+UNION ALL
+
+SELECT
+    'FULL_20260926_001',
+    'ORACLE',
+    'CLAIM',
+    'claims.csv',
+    120,
+    COUNT(*),
+    COUNT(*) - 120,
+    IFF(COUNT(*) = 120, 'PASS', 'FAIL'),
+    SUM(BILLED_AMOUNT),
+    SUM(PAID_AMOUNT),
+    SUM(BALANCE_AMOUNT),
+    ROUND(
+        SUM(BILLED_AMOUNT)
+        - SUM(PAID_AMOUNT)
+        - SUM(BALANCE_AMOUNT),
+        2
+    ),
+    IFF(
+        ABS(
+            SUM(BILLED_AMOUNT)
+            - SUM(PAID_AMOUNT)
+            - SUM(BALANCE_AMOUNT)
+        ) <= 0.01,
+        'PASS',
+        'FAIL'
+    ),
+    IFF(COUNT(*) = 120, 'SUCCESS', 'FAILED'),
+    CURRENT_TIMESTAMP()
+FROM DEV_HEALTH_DB.RAW.CLAIMS
+
+UNION ALL
+
+SELECT
+    'FULL_20260926_001',
+    'SQL_SERVER',
+    'BILLING',
+    'billing.csv',
+    120,
+    COUNT(*),
+    COUNT(*) - 120,
+    IFF(COUNT(*) = 120, 'PASS', 'FAIL'),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    'NOT_APPLICABLE',
+    IFF(COUNT(*) = 120, 'SUCCESS', 'FAILED'),
+    CURRENT_TIMESTAMP()
+FROM DEV_HEALTH_DB.RAW.BILLING
+
+UNION ALL
+
+SELECT
+    'FULL_20260926_001',
+    'SQL_SERVER',
+    'PAYMENT',
+    'payments.csv',
+    110,
+    COUNT(*),
+    COUNT(*) - 110,
+    IFF(COUNT(*) = 110, 'PASS', 'FAIL'),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    'NOT_APPLICABLE',
+    IFF(COUNT(*) = 110, 'SUCCESS', 'FAILED'),
+    CURRENT_TIMESTAMP()
+FROM DEV_HEALTH_DB.RAW.PAYMENTS
+
+UNION ALL
+
+SELECT
+    'FULL_20260926_001',
+    'SQL_SERVER',
+    'DOCTOR_ASSIGNMENT',
+    'doctor_assignments.csv',
+    60,
+    COUNT(*),
+    COUNT(*) - 60,
+    IFF(COUNT(*) = 60, 'PASS', 'FAIL'),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    'NOT_APPLICABLE',
+    IFF(COUNT(*) = 60, 'SUCCESS', 'FAILED'),
+    CURRENT_TIMESTAMP()
+FROM DEV_HEALTH_DB.RAW.DOCTOR_ASSIGNMENTS;
