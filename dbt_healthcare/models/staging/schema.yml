@@ -1,30 +1,134 @@
 version: 2
+
 models:
   - name: stg_patients
     columns:
       - name: patient_id
-        tests: [not_null, unique]
+        data_tests:
+          - not_null
+          - unique
+
   - name: stg_providers
     columns:
       - name: provider_id
-        tests: [not_null, unique]
-  - name: stg_claims
-    columns:
-      - name: claim_id
-        tests: [not_null, unique]
-      - name: patient_id
-        tests:
+        data_tests:
           - not_null
-          - relationships:
-              to: ref('stg_patients')
-              field: patient_id
-      - name: billed_amount
-        tests: [not_null]
-  - name: stg_appointments
-    columns:
-      - name: appointment_id
-        tests: [not_null, unique]
+          - unique
+
   - name: stg_insurance
     columns:
       - name: insurance_id
-        tests: [not_null, unique]
+        data_tests:
+          - not_null
+          - unique
+
+      - name: patient_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_patients')
+                field: patient_id
+
+  - name: stg_appointments
+    columns:
+      - name: appointment_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: patient_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_patients')
+                field: patient_id
+
+      - name: provider_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_providers')
+                field: provider_id
+
+  - name: stg_claims
+    columns:
+      - name: claim_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: patient_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_patients')
+                field: patient_id
+
+      - name: provider_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_providers')
+                field: provider_id
+
+      - name: billed_amount
+        data_tests:
+          - not_null
+
+  - name: stg_billing
+    columns:
+      - name: billing_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: claim_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_claims')
+                field: claim_id
+
+  - name: stg_payments
+    columns:
+      - name: payment_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: claim_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_claims')
+                field: claim_id
+
+  - name: stg_clinical_records
+    columns:
+      - name: clinical_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: patient_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_patients')
+                field: patient_id
+
+      - name: provider_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_providers')
+                field: provider_id
