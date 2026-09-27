@@ -1,0 +1,70 @@
+name: dbt-ci
+
+on:
+  pull_request:
+    paths:
+      - "dbt_healthcare/**"
+
+jobs:
+  dbt-build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dbt
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install dbt==2.0.6
+
+      - name: Verify dbt version
+        run: dbt --version
+
+      - name: Create Snowflake private key
+        env:
+          SNOWFLAKE_PRIVATE_KEY_B64: ${{ secrets.SNOWFLAKE_PRIVATE_KEY_B64 }}
+        run: |
+          mkdir -p ~/.snowflake
+          echo "$SNOWFLAKE_PRIVATE_KEY_B64" | base64 --decode > ~/.snowflake/healthcare_rsa_key.p8
+          chmod 600 ~/.snowflake/healthcare_rsa_key.p8
+
+      - name: Create dbt profile
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+        run: |
+          mkdir -p ~/.dbt
+
+          cat > ~/.dbt/profiles.yml <<EOF
+          healthcare_analytics:
+            target: dev
+            outputs:
+              dev:
+                type: snowflake
+                account: "${SNOWFLAKE_ACCOUNT}"
+                user: "${SNOWFLAKE_USER}"
+                private_key_path: "/home/runner/.snowflake/healthcare_rsa_key.p8"
+                role: "ACCOUNTADMIN"
+                database: "DEV_HEALTH_DB"
+                warehouse: "HEALTH_DW_WH"
+                schema: "STAGING"
+                threads: 4
+          EOF
+
+      - name: Install dbt packages
+        working-directory: dbt_healthcare
+        run: dbt deps
+
+      - name: Parse project
+        working-directory: dbt_healthcare
+        run: dbt parse --target dev
+
+      - name: Build and test
+        working-directory: dbt_healthcare
+        run: dbt build --target dev
