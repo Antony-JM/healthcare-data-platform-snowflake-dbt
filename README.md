@@ -117,3 +117,22 @@ The repository is designed to be version-controlled with Git and includes a GitH
 ## CI/CD
 
 GitHub Actions validates the dbt project on pull requests by running dependency installation, project parsing, and dbt build/tests against the development environment.
+
+## Data Quality & Observability
+
+### Source Freshness Monitoring
+
+The RAW healthcare sources are monitored using dbt source freshness checks based on the `INGESTED_AT` timestamp.
+
+Freshness thresholds:
+
+| Threshold | Status | Meaning |
+|---|---|---|
+| < 24 hours | Pass | Source is considered fresh |
+| 24–48 hours | Warning | Source may require investigation |
+| > 48 hours | Error | Source is considered stale |
+
+Run the freshness check with:
+
+```bash
+dbt source freshness --target dev
