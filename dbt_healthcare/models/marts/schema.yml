@@ -127,3 +127,42 @@ models:
               arguments:
                 to: ref('dim_provider')
                 field: provider_id
+                
+  - name: healthcare_kpis
+    description: "Executive healthcare KPI summary for BI reporting."
+    columns:
+      - name: total_patients
+        data_tests:
+          - not_null
+
+      - name: total_appointments
+        data_tests:
+          - not_null
+
+      - name: total_claims
+        data_tests:
+          - not_null
+
+      - name: total_billed
+        data_tests:
+          - not_null
+
+      - name: total_paid
+        data_tests:
+          - not_null
+
+      - name: total_balance
+        data_tests:
+          - not_null
+
+      - name: denial_rate_pct
+        data_tests:
+          - not_null
+
+      - name: no_show_rate_pct
+        data_tests:
+          - not_null
+
+      - name: collection_rate_pct
+        data_tests:
+          - not_null
