@@ -113,3 +113,7 @@ For the hands-on build, use Azure Data Factory + Azure Blob concepts, Snowflake,
 ### GitHub
 
 The repository is designed to be version-controlled with Git and includes a GitHub Actions dbt CI workflow template. Secrets must be supplied through GitHub Secrets and never committed to source control.
+
+## CI/CD
+
+GitHub Actions validates the dbt project on pull requests by running dependency installation, project parsing, and dbt build/tests against the development environment.
