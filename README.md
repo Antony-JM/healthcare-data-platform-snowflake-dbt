@@ -136,3 +136,12 @@ Run the freshness check with:
 
 ```bash
 dbt source freshness --target dev
+
+```
+
+The current synthetic DEV dataset intentionally demonstrates stale-source detection for several domains. In a production environment, a warning would trigger investigation of the upstream ingestion pipeline, while an error would require remediation before downstream processing continues.
+
+For detailed operational procedures, see:
+
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+- [`docs/OPERATIONS_RUNBOOK.md`](docs/OPERATIONS_RUNBOOK.md)
