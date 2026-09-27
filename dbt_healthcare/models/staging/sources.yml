@@ -2,15 +2,15 @@ version: 2
 
 sources:
   - name: raw
-    database: DEV_HEALTH_DB
+    database: "{{ target.database }}"
     schema: RAW
     tables:
       - name: patients
       - name: providers
       - name: insurance
       - name: appointments
+      - name: clinical_records
       - name: claims
       - name: billing
       - name: payments
-      - name: clinical_records
       - name: doctor_assignments
