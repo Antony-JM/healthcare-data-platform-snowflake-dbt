@@ -4,6 +4,17 @@ sources:
   - name: raw
     database: "{{ target.database }}"
     schema: RAW
+
+    config:
+      loaded_at_field: ingested_at
+      freshness:
+        warn_after:
+          count: 24
+          period: hour
+        error_after:
+          count: 48
+          period: hour
+
     tables:
       - name: patients
       - name: providers
